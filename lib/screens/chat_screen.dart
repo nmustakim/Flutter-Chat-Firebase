@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_firebase/services/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-
 import '../models/message_model.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -31,7 +30,7 @@ class ChatScreenState extends State<ChatScreen> {
     if (messageText.isNotEmpty) {
       await _chatService.sendMessage(
         widget.sentToId,
-       messageText
+        messageText,
       );
       _messageController.clear();
       _scrollController.animateTo(
@@ -45,114 +44,134 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo,
       appBar: AppBar(
         elevation: 0,
         title: Text(widget.sentToEmail),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder(
-                stream: _chatService.getMessages(
-                  widget.sentToId,
-                  _auth.currentUser!.uid,
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              height: 689,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(30),
                 ),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text(snapshot.error.toString());
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  final messages = snapshot.data!.docs;
-                  return ListView.builder(
-                    controller: _scrollController,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final messageData = messages[index].data() as Map<String, dynamic>;
-                      final message = Message.fromMap(messageData);
-                      return _buildMessage(message);
-                    },
-                  );
-                },
+              ),
+              child: Column(
+                children: [
+                  Expanded(child: _buildMessageList()),
+                  _buildMessageInput(),
+                ],
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: _sendMessage,
-                  icon: const Icon(Icons.send),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildMessage(Message message) {
-    final isCurrentUser = message.senderId == _auth.currentUser!.uid;
-    final alignment = isCurrentUser ?CrossAxisAlignment.end : CrossAxisAlignment.start;
-    final bgColor = isCurrentUser ? Colors.blue : Colors.grey[300];
-    final textColor = isCurrentUser ? Colors.white : Colors.black;
-    final borderRadius = BorderRadius.only(
-      topLeft: Radius.circular(isCurrentUser ? 16 : 0),
-      topRight: Radius.circular(isCurrentUser ? 0 : 16),
-      bottomLeft: const Radius.circular(16),
-      bottomRight: const Radius.circular(16),
+  Widget _buildMessageList() {
+    return StreamBuilder(
+      stream: _chatService.getMessages(
+        widget.sentToId,
+        _auth.currentUser!.uid,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text(snapshot.error.toString());
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        final messages = snapshot.data!.docs;
+        return ListView.builder(
+          controller: _scrollController,
+          itemCount: messages.length,
+          itemBuilder: (context, index) {
+            final messageData =
+            messages[index].data() as Map<String, dynamic>;
+            final message = Message.fromMap(messageData);
+            return _buildMessageItem(message);
+          },
+        );
+      },
     );
+  }
 
+  Widget _buildMessageInput() {
     return Row(
-      crossAxisAlignment: alignment,
       children: [
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: borderRadius,
+        Expanded(
+          child: TextField(
+            maxLines: 3,
+            controller: _messageController,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                message.senderEmail,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                message.message,
-                style: TextStyle(color: textColor),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _formatTimestamp(message.timeStamp),
-                style: TextStyle(fontSize: 12, color: textColor),
-              ),
-            ],
-          ),
+        ),
+        IconButton(
+          onPressed: _sendMessage,
+          icon: const Icon(Icons.send),
         ),
       ],
     );
   }
+
+  Widget _buildMessageItem(Message message) {
+    final isCurrentUser = message.senderId == _auth.currentUser!.uid;
+    final bgColor = isCurrentUser ? Colors.blue : Colors.grey[300];
+    final textColor = isCurrentUser ? Colors.white : Colors.black;
+    final borderRadius = BorderRadius.only(
+      topLeft: Radius.circular(isCurrentUser ? 20 : 0),
+      topRight: Radius.circular(isCurrentUser ? 0 : 20),
+      bottomLeft: const Radius.circular(20),
+      bottomRight: const Radius.circular(20),
+    );
+
+    return Container(
+      // alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft, // Align messages from others to the left
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: borderRadius,
+      ),
+      child: Column(
+        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          if (!isCurrentUser)
+            Text(
+              message.senderEmail,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+          const SizedBox(height: 4),
+          Text(
+            message.message,
+            style: TextStyle(color: textColor),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _formatTimestamp(message.timeStamp),
+            style: TextStyle(fontSize: 12, color: textColor),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   String _formatTimestamp(Timestamp timestamp) {
     final dateTime = timestamp.toDate();

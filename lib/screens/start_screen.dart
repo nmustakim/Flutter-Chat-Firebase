@@ -1,5 +1,6 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_firebase/screens/auth_gate.dart';
 import 'package:flutter_svg/svg.dart';
 
 class StartScreen extends StatelessWidget {
@@ -56,7 +57,7 @@ class StartScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 42.5,),
-            SizedBox(height: 64,width: 314,child: ElevatedButton(onPressed:()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>SignInScreen(providers: [EmailAuthProvider()],))),style: ElevatedButton.styleFrom(shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),backgroundColor: Colors.white),child: Text('Get started',style: TextStyle(color: Colors.black,fontSize: 16),),),)
+            SizedBox(height: 64,width: 314,child: ElevatedButton(onPressed:()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>AuthGate(),)),style: ElevatedButton.styleFrom(shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),backgroundColor: Colors.white),child: Text('Get started',style: TextStyle(color: Colors.black,fontSize: 16),),),)
           ],
         ),
       ),
