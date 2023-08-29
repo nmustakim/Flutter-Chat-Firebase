@@ -10,14 +10,23 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.indigo,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.indigo,
         centerTitle: true,
-        title: const Text(
-          'ChatBase',
-          style: TextStyle(fontSize: 36),
+        title: const Column(
+          children: [
+            Text(
+              'ChatBase',
+              style: TextStyle(fontSize: 36),
+            ),
+
+            Text(
+              'Chatting app with Firebase',
+              style: TextStyle(fontSize: 12,color: Colors.yellow),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -59,7 +68,7 @@ class StartScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 42.5,),
-              SizedBox(height: 50,width: 314,child: ElevatedButton(onPressed:()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginForm(),)),style: ElevatedButton.styleFrom(shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),backgroundColor: Colors.white),child: Text('Get started',style: TextStyle(color: Colors.black,fontSize: 16),),),)
+              SizedBox(height: 50,width: 314,child: ElevatedButton(onPressed:()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginForm(),)),style: ElevatedButton.styleFrom(shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),backgroundColor: Colors.white),child: const Text('Get started',style: TextStyle(color: Colors.black,fontSize: 16),),),)
             ],
           ),
         ),

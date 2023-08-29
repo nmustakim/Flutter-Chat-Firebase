@@ -62,13 +62,19 @@ class _HomeState extends State<Home> {
                         vertical: 18.0, horizontal: 20),
                     child: Theme(
                       data: ThemeData.dark(),
-                      child: Column(
+                      child:userProvider.fetchingUser
+                          ? const Center(
+                          child: Text(
+                            'Loading...',
+                            style: TextStyle(fontSize: 20, color: Colors.indigo),
+                          ))
+                          :userProvider.users.isNotEmpty?  Column(
                         children: [
                           const SizedBox(height: 10),
                           CircleAvatar(
                             radius: 40,
                             backgroundImage:
-                                NetworkImage(userProvider.currentUser!.image),
+                                NetworkImage(userProvider.currentUser?.image??''),
                           ),
                           SingleSection(
                             children: [
@@ -79,13 +85,13 @@ class _HomeState extends State<Home> {
                                       MaterialPageRoute(
                                           builder: (context) => ProfileScreen(
                                               name: userProvider
-                                                  .currentUser!.name,
+                                                  .currentUser?.name??'',
                                               email: userProvider
-                                                  .currentUser!.email,
+                                                  .currentUser?.email??"",
                                               image: userProvider
-                                                  .currentUser!.image,
+                                                  .currentUser?.image??"",
                                               username: userProvider
-                                                  .currentUser!.username)));
+                                                  .currentUser?.username??"")));
                                 },
                                 child: const ListTile(
                                     title: Text("Profile"),
@@ -118,7 +124,17 @@ class _HomeState extends State<Home> {
                                     (route) => false)),
                           ),
                         ],
-                      ),
+                      ):Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Something went wrong'),
+                            IconButton(
+                                onPressed: () => fetchUsers(),
+                                icon: const Icon(Icons.refresh))
+                          ],
+                        ),
+                      )
                     )))),
         backgroundColor: Colors.indigo,
         body: SingleChildScrollView(
