@@ -6,6 +6,7 @@ import '../models/user_model.dart';
 
 class AppProvider extends ChangeNotifier {
   bool isLoading = false;
+  bool fetchingUser = false;
   bool isObscure = true;
   static final authService = AuthService();
   List<UserModel> _users = [];
@@ -16,6 +17,7 @@ class AppProvider extends ChangeNotifier {
 
   Future<void> fetchUsers() async {
     try {
+      fetchingUser = true;
       final CollectionReference usersCollection =
           FirebaseFirestore.instance.collection('users');
       final QuerySnapshot snapshot = await usersCollection.get();
@@ -31,15 +33,22 @@ class AppProvider extends ChangeNotifier {
         );
       }).toList();
 
-      notifyListeners();
+
+
     } catch (e) {
       print('Error fetching users: $e');
     }
+    finally{
+     fetchingUser = false;
+     notifyListeners();
+    }
+
   }
 
 
   Future<void> fetchCurrentUser() async {
     try {
+
       final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
       final DocumentSnapshot snapshot = await usersCollection.doc(FirebaseAuth.instance.currentUser!.uid).get();
@@ -52,9 +61,14 @@ class AppProvider extends ChangeNotifier {
         name: data['name'],
         image: data['image'],
       );
+      notifyListeners();
     } catch (e) {
       print('Error fetching current user: $e');
     }
+    finally{
+
+    }
+
   }
 
 

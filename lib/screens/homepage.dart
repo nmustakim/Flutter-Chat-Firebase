@@ -63,15 +63,6 @@ class _HomeState extends State<Home> {
                       data: ThemeData.dark(),
                       child: Column(
                         children: [
-                          const CircleAvatar(
-                            radius: 60,
-                            backgroundColor: Colors.grey,
-                            child: Icon(
-                              Icons.person,
-                              size: 60,
-                              color: Colors.white,
-                            ),
-                          ),
                           const SizedBox(height: 10),
                           const Divider(
                             color: Colors.white,
@@ -86,9 +77,9 @@ class _HomeState extends State<Home> {
                                       builder: (context) => ProfileScreen(
                                           name: userProvider.currentUser!.name,
                                           email:
-                                              userProvider.currentUser!.email,
+                                          userProvider.currentUser!.email,
                                           image:
-                                              userProvider.currentUser!.image,
+                                          userProvider.currentUser!.image,
                                           username: userProvider
                                               .currentUser!.username)));
                             },
@@ -99,10 +90,10 @@ class _HomeState extends State<Home> {
                             onTap: () async => await FirebaseAuth.instance
                                 .signOut()
                                 .then((value) => Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginForm()),
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                    const LoginForm()),
                                     (route) => false)),
                           )
                         ],
@@ -110,7 +101,8 @@ class _HomeState extends State<Home> {
                     )))),
         backgroundColor: Colors.indigo,
         body: SingleChildScrollView(
-          child: Column(
+          child:
+          Column(
             children: [
               Container(
                 height: 580,
@@ -119,7 +111,7 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(30),
                         topLeft: Radius.circular(30))),
-                child: ListView.builder(
+                child: userProvider.fetchingUser? const Center(child: Text('Loading...',style: TextStyle(fontSize: 20,color: Colors.indigo),)):userProvider.users.isNotEmpty? ListView.builder(
                     itemCount: users.length,
                     itemBuilder: (context, index) {
                       final user = users[index];
@@ -129,12 +121,12 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                      image: user.image,
-                                      name: user.name,
-                                      username: user.username,
-                                      id: user.id,
-                                      email: user.email,
-                                    ))),
+                                  image: user.image,
+                                  name: user.name,
+                                  username: user.username,
+                                  id: user.id,
+                                  email: user.email,
+                                ))),
                         title: Text(user.name),
                         subtitle: Text(user.email),
                         leading: InkWell(
@@ -147,10 +139,16 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       );
-                    }),
+                    }): Center(child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Something went wrong'),
+                    IconButton(onPressed: ()=>fetchUsers(), icon: const Icon(Icons.refresh))
+                  ],
+                ),)
               ),
             ],
-          ),
+          )
         ));
   }
 }
