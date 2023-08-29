@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_firebase/screens/login.dart';
 import 'package:flutter_chat_firebase/screens/profile.dart';
+import 'package:flutter_chat_firebase/screens/widgets.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import 'chat_screen.dart';
@@ -53,7 +54,9 @@ class _HomeState extends State<Home> {
           ),
           backgroundColor: Colors.indigo,
         ),
-        drawer: Drawer(
+        drawer:
+
+        Drawer(
             backgroundColor: Colors.indigo.shade400,
             child: SafeArea(
                 child: Padding(
@@ -64,29 +67,38 @@ class _HomeState extends State<Home> {
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
-                          const Divider(
-                            color: Colors.white,
+                           CircleAvatar(
+                             radius: 40,
+                             backgroundImage: NetworkImage(userProvider.currentUser!.image),),
+
+                           SingleSection(
+                            children: [
+                              InkWell(
+
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ProfileScreen(
+                                              name: userProvider.currentUser!.name,
+                                              email:
+                                              userProvider.currentUser!.email,
+                                              image:
+                                              userProvider.currentUser!.image,
+                                              username: userProvider
+                                                  .currentUser!.username)));
+                                },
+                                child: const ListTile(
+                                    title: Text("Profile"), trailing: Icon(Icons.person_outline_rounded)),
+                              ),
+                                                        ],
                           ),
+
+                          const Divider(),
                           ListTile(
-                            leading: const Icon(Icons.person),
-                            title: const Text('Profile'),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ProfileScreen(
-                                          name: userProvider.currentUser!.name,
-                                          email:
-                                          userProvider.currentUser!.email,
-                                          image:
-                                          userProvider.currentUser!.image,
-                                          username: userProvider
-                                              .currentUser!.username)));
-                            },
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.logout),
+
                             title: const Text('Logout'),
+                            trailing: const Icon(Icons.logout),
                             onTap: () async => await FirebaseAuth.instance
                                 .signOut()
                                 .then((value) => Navigator.pushAndRemoveUntil(
@@ -95,7 +107,13 @@ class _HomeState extends State<Home> {
                                     builder: (context) =>
                                     const LoginForm()),
                                     (route) => false)),
-                          )
+                          ),
+                          const Divider(),
+                          const ListTile(title: Text('About'),
+                          trailing: Icon(Icons.arrow_forward),),
+                          const Divider(),
+                          const ListTile(title: Text('Help & Support'),
+                            trailing: Icon(Icons.arrow_forward),),
                         ],
                       ),
                     )))),
