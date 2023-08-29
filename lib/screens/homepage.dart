@@ -54,9 +54,7 @@ class _HomeState extends State<Home> {
           ),
           backgroundColor: Colors.indigo,
         ),
-        drawer:
-
-        Drawer(
+        drawer: Drawer(
             backgroundColor: Colors.indigo.shade400,
             child: SafeArea(
                 child: Padding(
@@ -67,106 +65,126 @@ class _HomeState extends State<Home> {
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
-                           CircleAvatar(
-                             radius: 40,
-                             backgroundImage: NetworkImage(userProvider.currentUser!.image),),
-
-                           SingleSection(
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage:
+                                NetworkImage(userProvider.currentUser!.image),
+                          ),
+                          SingleSection(
                             children: [
                               InkWell(
-
                                 onTap: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => ProfileScreen(
-                                              name: userProvider.currentUser!.name,
-                                              email:
-                                              userProvider.currentUser!.email,
-                                              image:
-                                              userProvider.currentUser!.image,
+                                              name: userProvider
+                                                  .currentUser!.name,
+                                              email: userProvider
+                                                  .currentUser!.email,
+                                              image: userProvider
+                                                  .currentUser!.image,
                                               username: userProvider
                                                   .currentUser!.username)));
                                 },
                                 child: const ListTile(
-                                    title: Text("Profile"), trailing: Icon(Icons.person_outline_rounded)),
+                                    title: Text("Profile"),
+                                    trailing:
+                                        Icon(Icons.person_outline_rounded)),
                               ),
-                                                        ],
+                            ],
                           ),
-
+                          const Divider(),
+                          const ListTile(
+                            title: Text('About'),
+                            trailing: Icon(Icons.arrow_forward),
+                          ),
+                          const Divider(),
+                          const ListTile(
+                            title: Text('Help & Support'),
+                            trailing: Icon(Icons.arrow_forward),
+                          ),
                           const Divider(),
                           ListTile(
-
                             title: const Text('Logout'),
                             trailing: const Icon(Icons.logout),
                             onTap: () async => await FirebaseAuth.instance
                                 .signOut()
                                 .then((value) => Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                    const LoginForm()),
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const LoginForm()),
                                     (route) => false)),
                           ),
-                          const Divider(),
-                          const ListTile(title: Text('About'),
-                          trailing: Icon(Icons.arrow_forward),),
-                          const Divider(),
-                          const ListTile(title: Text('Help & Support'),
-                            trailing: Icon(Icons.arrow_forward),),
                         ],
                       ),
                     )))),
         backgroundColor: Colors.indigo,
         body: SingleChildScrollView(
-          child:
-          Column(
-            children: [
-              Container(
+            child: Column(
+          children: [
+            Container(
                 height: 580,
                 decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(30),
                         topLeft: Radius.circular(30))),
-                child: userProvider.fetchingUser? const Center(child: Text('Loading...',style: TextStyle(fontSize: 20,color: Colors.indigo),)):userProvider.users.isNotEmpty? ListView.builder(
-                    itemCount: users.length,
-                    itemBuilder: (context, index) {
-                      final user = users[index];
+                child: userProvider.fetchingUser
+                    ? const Center(
+                        child: Text(
+                        'Loading...',
+                        style: TextStyle(fontSize: 20, color: Colors.indigo),
+                      ))
+                    : userProvider.users.isNotEmpty
+                        ? ListView.builder(
+                            itemCount: users.length,
+                            itemBuilder: (context, index) {
+                              final user = users[index];
 
-                      return ListTile(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChatScreen(
-                                  image: user.image,
-                                  name: user.name,
-                                  username: user.username,
-                                  id: user.id,
-                                  email: user.email,
-                                ))),
-                        title: Text(user.name),
-                        subtitle: Text(user.email),
-                        leading: InkWell(
-
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(name: user.name, email: user.email, image: user.image, username: user.username)));
-                          },
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(user.image),
-                          ),
-                        ),
-                      );
-                    }): Center(child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Something went wrong'),
-                    IconButton(onPressed: ()=>fetchUsers(), icon: const Icon(Icons.refresh))
-                  ],
-                ),)
-              ),
-            ],
-          )
-        ));
+                              return ListTile(
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatScreen(
+                                              image: user.image,
+                                              name: user.name,
+                                              username: user.username,
+                                              id: user.id,
+                                              email: user.email,
+                                            ))),
+                                title: Text(user.name),
+                                subtitle: Text(user.email),
+                                leading: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ProfileScreen(
+                                                name: user.name,
+                                                email: user.email,
+                                                image: user.image,
+                                                username: user.username)));
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(user.image),
+                                  ),
+                                ),
+                              );
+                            })
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text('Something went wrong'),
+                                IconButton(
+                                    onPressed: () => fetchUsers(),
+                                    icon: const Icon(Icons.refresh))
+                              ],
+                            ),
+                          )),
+          ],
+        )));
   }
 }

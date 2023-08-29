@@ -11,7 +11,6 @@ class ChatScreen extends StatefulWidget {
   final String id;
   final String email;
   final String username;
-
   final String image;
 
   const ChatScreen({
