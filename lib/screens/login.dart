@@ -1,7 +1,5 @@
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_firebase/screens/register.dart';
-import 'package:flutter_chat_firebase/services/auth_service.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -103,7 +101,7 @@ class _LoginFormState extends State<LoginForm> {
                         if (value == null || value.isEmpty) {
                           return 'Email is required';
                         } else if (!RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                             .hasMatch(email)) {
                           return 'Email is invalid';
                         } else {
@@ -164,7 +162,7 @@ class _LoginFormState extends State<LoginForm> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password is required';
-                        } else if (!RegExp(r'^().{8,}$').hasMatch(password)) {
+                        } else if (!RegExp(r'^.{8,}$').hasMatch(password)) {
                           return 'At least 8 char needed';
                         } else {
                           return null;
@@ -207,7 +205,7 @@ class _LoginFormState extends State<LoginForm> {
                                     Center(child: Text('Login failed'))));
                           }
                         },
-                        child:  Center(child: userProvider.isLoading?Container(margin:EdgeInsets.all(9),child: const CircularProgressIndicator(color: Colors.white,)):const Text('Login')))),
+                        child:  Center(child: userProvider.isLoading?Container(margin:const EdgeInsets.all(9),child: const CircularProgressIndicator(color: Colors.white,)):const Text('Login')))),
                 const SizedBox(height: 20,),
 
                 Row(

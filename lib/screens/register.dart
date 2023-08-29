@@ -70,7 +70,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     if (value == null || value.isEmpty) {
                       return 'Email is required';
                     } else if (!RegExp(
-                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                         .hasMatch(value)) {
                       return 'Email is invalid';
                     }
@@ -209,7 +209,7 @@ class _SignUpFormState extends State<SignUpForm> {
             );
           }
         },
-        child:  Center(child:userProvider.isLoading ? Container(margin:EdgeInsets.all(9),child: const CircularProgressIndicator(color: Colors.white,)): const Text('Sign Up')),
+        child:  Center(child:userProvider.isLoading ? Container(margin:const EdgeInsets.all(9),child: const CircularProgressIndicator(color: Colors.white,)): const Text('Sign Up')),
       ),
     );
   }

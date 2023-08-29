@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_firebase/screens/start_screen.dart';
 import 'package:flutter_svg/svg.dart';
-import '../main.dart';
 import 'auth_gate.dart';
 
 

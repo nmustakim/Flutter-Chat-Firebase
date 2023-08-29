@@ -1,6 +1,4 @@
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_firebase/screens/auth_gate.dart';
 import 'package:flutter_chat_firebase/screens/login.dart';
 import 'package:flutter_svg/svg.dart';
 
