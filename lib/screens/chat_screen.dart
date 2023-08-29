@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_firebase/screens/full_image.dart';
 import 'package:flutter_chat_firebase/screens/profile.dart';
 import 'package:flutter_chat_firebase/services/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -45,6 +48,27 @@ class ChatScreenState extends State<ChatScreen> {
       );
     }
   }
+  void _sendFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      await _chatService.sendMessage(
+        widget.id,
+        '',
+        file: file,
+      );
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,10 +169,19 @@ class ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ),
-        IconButton(
-          onPressed: _sendMessage,
-          icon: const Icon(Icons.send),
-        ),
+        Column(
+          children: [
+            IconButton(
+              onPressed: _sendMessage,
+              icon: const Icon(Icons.send),
+            ),
+            IconButton(
+              onPressed: _sendFile,
+              icon: const Icon(Icons.attach_file),
+            ),
+          ],
+        )
+
       ],
     );
   }
@@ -163,7 +196,6 @@ class ChatScreenState extends State<ChatScreen> {
       bottomLeft: const Radius.circular(20),
       bottomRight: const Radius.circular(20),
     );
-
     return Column(
       crossAxisAlignment:
           isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -187,10 +219,20 @@ class ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
               const SizedBox(height: 4),
-              Text(
-                message.message,
-                style: TextStyle(color: textColor),
-              ),
+
+              if (message.fileURL != null)
+                InkWell(
+                  onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>FullScreenImage(imageUrl: message.fileURL!))),
+                  child: Image.network(
+                    message.fileURL!,
+                    width: 200,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Text(
+                  message.message,
+                  style: TextStyle(color: textColor),
+                ),
               const SizedBox(height: 4),
               Text(
                 _formatTimestamp(message.timeStamp),
