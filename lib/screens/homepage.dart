@@ -35,7 +35,6 @@ class _HomeState extends State<Home> {
     final users = userProvider.users
         .where((user) => user.id != _auth.currentUser?.uid)
         .toList();
-    print(users);
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 100,
@@ -49,7 +48,7 @@ class _HomeState extends State<Home> {
               ),
               Text(
                 'Chatting app using Firebase',
-                style: TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: 12,color: Colors.black),
               ),
             ],
           ),
@@ -131,7 +130,7 @@ class _HomeState extends State<Home> {
                         title: Text(user.name),
                         subtitle: Text(user.email),
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(user.image ?? ''),
+                          backgroundImage: NetworkImage(user.image),
                         ),
                       );
                     }),

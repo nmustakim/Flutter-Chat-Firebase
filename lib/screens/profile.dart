@@ -65,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Implement edit profile functionality
+
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.indigo,
