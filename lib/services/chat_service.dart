@@ -31,8 +31,7 @@ class ChatService {
     List <String> ids = [oneUserId,anotherUserId];
     ids.sort();
     String chatRoomId = ids.join('_');
-    print(_fireStore.collection('chat_rooms').doc(chatRoomId).collection('messages'));
-    return _fireStore.collection('chat_rooms').doc(chatRoomId).collection('messages').orderBy('timeStamp',descending: false).snapshots();
+   return _fireStore.collection('chat_rooms').doc(chatRoomId).collection('messages').orderBy('timeStamp',descending: false).snapshots();
   }
 
 }

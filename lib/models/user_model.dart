@@ -1,24 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-final String id;
+  final String id;
   final String name;
-  final  String email;
-   String? image;
+  final String username;
+  final String email;
+  final String image;
 
-
-  UserModel({required this.id, required this.name, required this.email,  this.image});
-
-
-factory UserModel.fromMap(Map<String, dynamic> map) {
-  return UserModel(
-    id: map['id'],
-    name: map['name'],
-    image: map['image'],
-    email: map['email'],
-  );
+  UserModel({required this.username,
+      required this.id,
+      required this.name,
+      required this.email,
+      required this.image});
 }
-  }
-
-
-

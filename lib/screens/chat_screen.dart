@@ -152,38 +152,42 @@ class ChatScreenState extends State<ChatScreen> {
       bottomRight: const Radius.circular(20),
     );
 
-    return Container(
-      // alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft, // Align messages from others to the left
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: borderRadius,
-      ),
-      child: Column(
-        crossAxisAlignment:
-            isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: [
-          if (!isCurrentUser)
-            Text(
-              message.senderEmail,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: textColor,
+    return Column(
+      crossAxisAlignment:
+          isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: borderRadius,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+            if (!isCurrentUser)
+              Text(
+                message.senderEmail,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
               ),
+            const SizedBox(height: 4),
+            Text(
+              message.message,
+              style: TextStyle(color: textColor),
             ),
-          const SizedBox(height: 4),
-          Text(
-            message.message,
-            style: TextStyle(color: textColor),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _formatTimestamp(message.timeStamp),
-            style: TextStyle(fontSize: 12, color: textColor),
-          ),
-        ],
-      ),
+            const SizedBox(height: 4),
+            Text(
+              _formatTimestamp(message.timeStamp),
+              style: TextStyle(fontSize: 12, color: textColor),
+            ),
+          ],),
+        )
+
+      ],
     );
   }
 

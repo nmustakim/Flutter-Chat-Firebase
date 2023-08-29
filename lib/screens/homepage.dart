@@ -1,12 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_firebase/screens/login.dart';
 import 'package:flutter_chat_firebase/screens/profile.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../models/user_model.dart';
 import '../providers/app_provider.dart';
 import 'chat_screen.dart';
 
@@ -24,21 +20,22 @@ class _HomeState extends State<Home> {
   }
 
   final _auth = FirebaseAuth.instance;
-   UserModel? _currentUser;
 
   void fetchUsers() async {
     final appProvider = Provider.of<AppProvider>(context, listen: false);
-    await appProvider.fetchAllUsers();
-    _currentUser = await appProvider.fetchUserData(_auth.currentUser!.uid);
+    await appProvider.fetchUsers();
+   await appProvider.fetchCurrentUser();
+
   }
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<AppProvider>(context);
 
-    final users = userProvider.allUsers
+    final users = userProvider.users
         .where((user) => user.id != _auth.currentUser?.uid)
         .toList();
+    print(users);
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 100,
@@ -80,11 +77,7 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProfileScreen(
-                                            name: _currentUser!.name,
-                                        image: _currentUser!.image!,
-                                        email: _currentUser!.email,
-                                          )));
+                                      builder: (context) => ProfileScreen(name: userProvider.currentUser!.name, email: userProvider.currentUser!.email, image: userProvider.currentUser!.image, username: userProvider.currentUser!.username)));
                             },
                           ),
                           ListTile(
@@ -95,7 +88,7 @@ class _HomeState extends State<Home> {
                                 .then((value) => Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => LoginForm()),
+                                        builder: (context) => const LoginForm()),
                                     (route) => false)),
                           )
                         ],
@@ -122,7 +115,7 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                    sendToImage: user.image!,
+                                    sendToImage: user.image,
                                     sendToEmail: user.name,
                                     sendToId: user.id))),
                         title: Text(user.name),

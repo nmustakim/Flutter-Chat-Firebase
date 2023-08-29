@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_firebase/services/auth_service.dart';
@@ -7,45 +8,56 @@ class AppProvider extends ChangeNotifier {
   bool isLoading = false;
   bool isObscure = true;
   static final authService = AuthService();
-  final CollectionReference _usersCollection =
-  FirebaseFirestore.instance.collection('users');
+  List<UserModel> _users = [];
+  UserModel? _currentUser;
 
-  List<UserModel> _allUsers = [];
+  List<UserModel> get users => _users;
+  UserModel? get currentUser => _currentUser;
 
-  List<UserModel> get allUsers => _allUsers;
-
-  Future<void> fetchAllUsers() async {
+  Future<void> fetchUsers() async {
     try {
-      final QuerySnapshot snapshot = await _usersCollection.get();
+      final CollectionReference usersCollection =
+          FirebaseFirestore.instance.collection('users');
+      final QuerySnapshot snapshot = await usersCollection.get();
 
-      _allUsers = snapshot.docs.map((doc) {
-        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      _users = snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return UserModel(
+          id: doc.id,
+          username:data['username'],
+          email: data['email'],
+          name: data['name'],
+          image: data['image'],
+        );
       }).toList();
 
       notifyListeners();
     } catch (e) {
-      print('Error fetching all users: $e');
+      print('Error fetching users: $e');
     }
   }
 
-  Future<UserModel> fetchUserData(String uid) async {
+
+  Future<void> fetchCurrentUser() async {
     try {
-      final DocumentSnapshot snapshot = await _usersCollection.doc(uid).get();
+      final CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+      final DocumentSnapshot snapshot = await usersCollection.doc(FirebaseAuth.instance.currentUser!.uid).get();
 
-      if (snapshot.exists) {
-        return UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
-      } else {
-        return UserModel(
-          name: 'User not found',
-          image: '',
-          email: '', id: '',
-        );
-      }
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      _currentUser = UserModel(
+        id: snapshot.id,
+        username: data['username'],
+        email: data['email'],
+        name: data['name'],
+        image: data['image'],
+      );
     } catch (e) {
-      print('Error fetching user data: $e');
-      rethrow;
+      print('Error fetching current user: $e');
     }
   }
+
+
 
   Future<void> signIn(String email, password, context) async {
     try {
