@@ -18,7 +18,7 @@ class ChatScreen extends StatefulWidget {
     required this.name,
     required this.id,
     Key? key,
-    required this.image, required String sendToEmail,  required this.username, required this.email,
+    required this.image,required this.username, required this.email,
   }) : super(key: key);
 
   @override

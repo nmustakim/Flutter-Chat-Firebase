@@ -24,8 +24,7 @@ class _HomeState extends State<Home> {
   void fetchUsers() async {
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     await appProvider.fetchUsers();
-   await appProvider.fetchCurrentUser();
-
+    await appProvider.fetchCurrentUser();
   }
 
   @override
@@ -48,7 +47,7 @@ class _HomeState extends State<Home> {
               ),
               Text(
                 'Chatting app using Firebase',
-                style: TextStyle(fontSize: 12,color: Colors.black),
+                style: TextStyle(fontSize: 12, color: Colors.black),
               ),
             ],
           ),
@@ -84,7 +83,14 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProfileScreen(name: userProvider.currentUser!.name, email: userProvider.currentUser!.email, image: userProvider.currentUser!.image, username: userProvider.currentUser!.username)));
+                                      builder: (context) => ProfileScreen(
+                                          name: userProvider.currentUser!.name,
+                                          email:
+                                              userProvider.currentUser!.email,
+                                          image:
+                                              userProvider.currentUser!.image,
+                                          username: userProvider
+                                              .currentUser!.username)));
                             },
                           ),
                           ListTile(
@@ -95,7 +101,8 @@ class _HomeState extends State<Home> {
                                 .then((value) => Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const LoginForm()),
+                                        builder: (context) =>
+                                            const LoginForm()),
                                     (route) => false)),
                           )
                         ],
@@ -122,11 +129,12 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                    image: user.image,
-                                    name: user.name,
-                                    username:user.username,
-                                    sendToEmail:user.email,
-                                    id: user.id, email: '',))),
+                                      image: user.image,
+                                      name: user.name,
+                                      username: user.username,
+                                      id: user.id,
+                                      email: user.email,
+                                    ))),
                         title: Text(user.name),
                         subtitle: Text(user.email),
                         leading: CircleAvatar(
