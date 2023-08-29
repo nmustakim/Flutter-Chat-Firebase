@@ -8,11 +8,12 @@ import '../models/message_model.dart';
 class ChatScreen extends StatefulWidget {
   final String sentToEmail;
   final String sentToId;
+  final String sendToImage;
 
   const ChatScreen({
     required this.sentToEmail,
     required this.sentToId,
-    Key? key,
+    Key? key, required this.sendToImage,
   }) : super(key: key);
 
   @override
@@ -46,8 +47,17 @@ class ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: Colors.indigo,
       appBar: AppBar(
+        toolbarHeight: 80,
         elevation: 0,
         title: Text(widget.sentToEmail),
+        leading: Row(
+          children: [
+            const SizedBox(width: 16,),
+            CircleAvatar(
+              backgroundImage: NetworkImage(widget.sendToImage, ),
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [

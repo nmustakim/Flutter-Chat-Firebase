@@ -51,7 +51,7 @@ class AuthService {
 
           'name':name,
           'username':username,
-          'image':'https://firebasestorage.googleapis.com/v0/b/flutter-chat-firebase-9e7b0.appspot.com/o/icon.svg?alt=media&token=9583a084-d695-420f-b247-f353ea9b619e',
+          'image':'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
           'email': email,
           'password': password,
 

@@ -16,24 +16,33 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final fireStore = FirebaseFirestore.instance;
-  final auth = FirebaseAuth.instance;
   @override
   void initState() {
     super.initState();
-    Provider.of<AppProvider>(context, listen: false).fetchUsers();
+    fetchUsers();
   }
+
+  void fetchUsers() async {
+    await Provider.of<AppProvider>(context, listen: false).fetchUsers();
+  }
+
+  final auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<AppProvider>(context);
+    final users = userProvider.users
+        .where((user) => user.id != auth.currentUser?.uid)
+        .toList();
     return Scaffold(
         appBar: AppBar(
+          toolbarHeight: 100,
           elevation: 0,
           title: const Text(
             'Chatbase',
             style: TextStyle(fontSize: 36),
           ),
+          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
           backgroundColor: Colors.indigo,
         ),
         drawer: Drawer(
@@ -73,45 +82,51 @@ class _HomeState extends State<Home> {
                           ListTile(
                             leading: const Icon(Icons.logout),
                             title: const Text('Logout'),
-                            onTap: () async =>
-                                await FirebaseAuth.instance.signOut().then((value) => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>LoginForm()), (route) => false)),
+                            onTap: () async => await FirebaseAuth.instance
+                                .signOut()
+                                .then((value) => Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginForm()),
+                                    (route) => false)),
                           )
                         ],
                       ),
                     )))),
         backgroundColor: Colors.indigo,
-        body: Column(
-          children: [
-            const Expanded(child: SizedBox()),
-            Container(
-              height: 580,
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(30),
-                      topLeft: Radius.circular(30))),
-              child: ListView.builder(
-                  itemCount: userProvider.users.length,
-                  itemBuilder: (context, index) {
-                    final user = userProvider.users[index];
-                    if (auth.currentUser!.email != user.email) {
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+
+              Container(
+                height: 580,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(30))),
+                child: ListView.builder(
+                    itemCount: users.length,
+                    itemBuilder: (context, index) {
+                      final user = users[index];
+
                       return ListTile(
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                    sentToEmail: user.name,
-                                    sentToId: user.id))),
+                                  sendToImage: user.image!,
+                                    sentToEmail: user.name, sentToId: user.id))),
                         title: Text(user.name),
                         subtitle: Text(user.email),
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(user.image ?? ''),
                         ),
                       );
-                    }
-                  }),
-            ),
-          ],
+                    }),
+              ),
+            ],
+          ),
         ));
   }
 }

@@ -14,7 +14,7 @@ class AppProvider extends ChangeNotifier {
   Future<void> fetchUsers() async {
     try {
       final CollectionReference usersCollection =
-          FirebaseFirestore.instance.collection('users');
+      FirebaseFirestore.instance.collection('users');
       final QuerySnapshot snapshot = await usersCollection.get();
 
       _users = snapshot.docs.map((doc) {
@@ -32,6 +32,7 @@ class AppProvider extends ChangeNotifier {
       print('Error fetching users: $e');
     }
   }
+
 
   Future<void> signIn(String email, password, context) async {
     try {
