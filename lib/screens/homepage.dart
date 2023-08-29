@@ -137,8 +137,14 @@ class _HomeState extends State<Home> {
                                     ))),
                         title: Text(user.name),
                         subtitle: Text(user.email),
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(user.image),
+                        leading: InkWell(
+
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(name: user.name, email: user.email, image: user.image, username: user.username)));
+                          },
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(user.image),
+                          ),
                         ),
                       );
                     }),
