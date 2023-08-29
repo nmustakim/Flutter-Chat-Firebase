@@ -7,32 +7,45 @@ class AppProvider extends ChangeNotifier {
   bool isLoading = false;
   bool isObscure = true;
   static final authService = AuthService();
-  List<UserModel> _users = [];
+  final CollectionReference _usersCollection =
+  FirebaseFirestore.instance.collection('users');
 
-  List<UserModel> get users => _users;
+  List<UserModel> _allUsers = [];
 
-  Future<void> fetchUsers() async {
+  List<UserModel> get allUsers => _allUsers;
+
+  Future<void> fetchAllUsers() async {
     try {
-      final CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection('users');
-      final QuerySnapshot snapshot = await usersCollection.get();
+      final QuerySnapshot snapshot = await _usersCollection.get();
 
-      _users = snapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        return UserModel(
-          id: doc.id,
-          email: data['email'],
-          name: data['name'],
-          image: data['image'],
-        );
+      _allUsers = snapshot.docs.map((doc) {
+        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
       }).toList();
 
       notifyListeners();
     } catch (e) {
-      print('Error fetching users: $e');
+      print('Error fetching all users: $e');
     }
   }
 
+  Future<UserModel> fetchUserData(String uid) async {
+    try {
+      final DocumentSnapshot snapshot = await _usersCollection.doc(uid).get();
+
+      if (snapshot.exists) {
+        return UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
+      } else {
+        return UserModel(
+          name: 'User not found',
+          image: '',
+          email: '', id: '',
+        );
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      rethrow;
+    }
+  }
 
   Future<void> signIn(String email, password, context) async {
     try {

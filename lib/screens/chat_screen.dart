@@ -6,14 +6,15 @@ import 'package:intl/intl.dart';
 import '../models/message_model.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String sentToEmail;
-  final String sentToId;
+  final String sendToEmail;
+  final String sendToId;
   final String sendToImage;
 
   const ChatScreen({
-    required this.sentToEmail,
-    required this.sentToId,
-    Key? key, required this.sendToImage,
+    required this.sendToEmail,
+    required this.sendToId,
+    Key? key,
+    required this.sendToImage,
   }) : super(key: key);
 
   @override
@@ -30,7 +31,7 @@ class ChatScreenState extends State<ChatScreen> {
     final messageText = _messageController.text.trim();
     if (messageText.isNotEmpty) {
       await _chatService.sendMessage(
-        widget.sentToId,
+        widget.sendToId,
         messageText,
       );
       _messageController.clear();
@@ -49,12 +50,16 @@ class ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         toolbarHeight: 80,
         elevation: 0,
-        title: Text(widget.sentToEmail),
+        title: Text(widget.sendToEmail),
         leading: Row(
           children: [
-            const SizedBox(width: 16,),
+            const SizedBox(
+              width: 16,
+            ),
             CircleAvatar(
-              backgroundImage: NetworkImage(widget.sendToImage, ),
+              backgroundImage: NetworkImage(
+                widget.sendToImage,
+              ),
             ),
           ],
         ),
@@ -88,7 +93,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget _buildMessageList() {
     return StreamBuilder(
       stream: _chatService.getMessages(
-        widget.sentToId,
+        widget.sendToId,
         _auth.currentUser!.uid,
       ),
       builder: (context, snapshot) {
@@ -105,8 +110,7 @@ class ChatScreenState extends State<ChatScreen> {
           controller: _scrollController,
           itemCount: messages.length,
           itemBuilder: (context, index) {
-            final messageData =
-            messages[index].data() as Map<String, dynamic>;
+            final messageData = messages[index].data() as Map<String, dynamic>;
             final message = Message.fromMap(messageData);
             return _buildMessageItem(message);
           },
@@ -157,7 +161,8 @@ class ChatScreenState extends State<ChatScreen> {
         borderRadius: borderRadius,
       ),
       child: Column(
-        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           if (!isCurrentUser)
             Text(
@@ -181,7 +186,6 @@ class ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
 
   String _formatTimestamp(Timestamp timestamp) {
     final dateTime = timestamp.toDate();

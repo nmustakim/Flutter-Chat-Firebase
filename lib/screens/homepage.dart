@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_firebase/screens/login.dart';
+import 'package:flutter_chat_firebase/screens/profile.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../models/user_model.dart';
 import '../providers/app_provider.dart';
 import 'chat_screen.dart';
 
@@ -22,27 +23,31 @@ class _HomeState extends State<Home> {
     fetchUsers();
   }
 
-  void fetchUsers() async {
-    await Provider.of<AppProvider>(context, listen: false).fetchUsers();
-  }
+  final _auth = FirebaseAuth.instance;
+   UserModel? _currentUser;
 
-  final auth = FirebaseAuth.instance;
+  void fetchUsers() async {
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
+    await appProvider.fetchAllUsers();
+    _currentUser = await appProvider.fetchUserData(_auth.currentUser!.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<AppProvider>(context);
-    final users = userProvider.users
-        .where((user) => user.id != auth.currentUser?.uid)
+
+    final users = userProvider.allUsers
+        .where((user) => user.id != _auth.currentUser?.uid)
         .toList();
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 100,
           elevation: 0,
+          centerTitle: true,
           title: const Text(
             'Chatbase',
             style: TextStyle(fontSize: 36),
           ),
-          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.search))],
           backgroundColor: Colors.indigo,
         ),
         drawer: Drawer(
@@ -75,8 +80,11 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProfileScreen()));
+                                      builder: (context) => ProfileScreen(
+                                            name: _currentUser!.name,
+                                        image: _currentUser!.image!,
+                                        email: _currentUser!.email,
+                                          )));
                             },
                           ),
                           ListTile(
@@ -97,7 +105,6 @@ class _HomeState extends State<Home> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-
               Container(
                 height: 580,
                 decoration: const BoxDecoration(
@@ -115,8 +122,9 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                  sendToImage: user.image!,
-                                    sentToEmail: user.name, sentToId: user.id))),
+                                    sendToImage: user.image!,
+                                    sendToEmail: user.name,
+                                    sendToId: user.id))),
                         title: Text(user.name),
                         subtitle: Text(user.email),
                         leading: CircleAvatar(
