@@ -41,9 +41,17 @@ class _HomeState extends State<Home> {
           toolbarHeight: 100,
           elevation: 0,
           centerTitle: true,
-          title: const Text(
-            'Chatbase',
-            style: TextStyle(fontSize: 36),
+          title: const Column(
+            children: [
+              Text(
+                'Chatbase',
+                style: TextStyle(fontSize: 36),
+              ),
+              Text(
+                'Chatting app using Firebase',
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
           ),
           backgroundColor: Colors.indigo,
         ),
@@ -115,9 +123,11 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChatScreen(
-                                    sendToImage: user.image,
-                                    sendToEmail: user.name,
-                                    sendToId: user.id))),
+                                    image: user.image,
+                                    name: user.name,
+                                    username:user.username,
+                                    sendToEmail:user.email,
+                                    id: user.id, email: '',))),
                         title: Text(user.name),
                         subtitle: Text(user.email),
                         leading: CircleAvatar(

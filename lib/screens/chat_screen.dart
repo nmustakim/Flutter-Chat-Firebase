@@ -1,20 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_firebase/screens/profile.dart';
 import 'package:flutter_chat_firebase/services/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import '../models/message_model.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String sendToEmail;
-  final String sendToId;
-  final String sendToImage;
+  final String name;
+  final String id;
+  final String email;
+  final String username;
+
+  final String image;
 
   const ChatScreen({
-    required this.sendToEmail,
-    required this.sendToId,
+    required this.name,
+    required this.id,
     Key? key,
-    required this.sendToImage,
+    required this.image, required String sendToEmail,  required this.username, required this.email,
   }) : super(key: key);
 
   @override
@@ -31,7 +35,7 @@ class ChatScreenState extends State<ChatScreen> {
     final messageText = _messageController.text.trim();
     if (messageText.isNotEmpty) {
       await _chatService.sendMessage(
-        widget.sendToId,
+        widget.id,
         messageText,
       );
       _messageController.clear();
@@ -50,19 +54,28 @@ class ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         toolbarHeight: 80,
         elevation: 0,
-        title: Text(widget.sendToEmail),
-        leading: Row(
-          children: [
-            const SizedBox(
-              width: 16,
-            ),
-            CircleAvatar(
-              backgroundImage: NetworkImage(
-                widget.sendToImage,
+        title: Text(widget.name),
+        centerTitle: true,
+        actions: [
+          Row(
+            children: [
+              InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(name: widget.name, email: widget.email, image: widget.image, username: widget.username)));
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(
+                    widget.image,
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
+              const SizedBox(
+                width: 24,
+              )
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -93,7 +106,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget _buildMessageList() {
     return StreamBuilder(
       stream: _chatService.getMessages(
-        widget.sendToId,
+        widget.id,
         _auth.currentUser!.uid,
       ),
       builder: (context, snapshot) {
@@ -124,7 +137,7 @@ class ChatScreenState extends State<ChatScreen> {
       children: [
         Expanded(
           child: TextField(
-            maxLines: 3,
+            maxLines: 2,
             controller: _messageController,
             decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -166,27 +179,27 @@ class ChatScreenState extends State<ChatScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            if (!isCurrentUser)
-              Text(
-                message.senderEmail,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
+              if (!isCurrentUser)
+                Text(
+                  widget.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
                 ),
+              const SizedBox(height: 4),
+              Text(
+                message.message,
+                style: TextStyle(color: textColor),
               ),
-            const SizedBox(height: 4),
-            Text(
-              message.message,
-              style: TextStyle(color: textColor),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              _formatTimestamp(message.timeStamp),
-              style: TextStyle(fontSize: 12, color: textColor),
-            ),
-          ],),
+              const SizedBox(height: 4),
+              Text(
+                _formatTimestamp(message.timeStamp),
+                style: TextStyle(fontSize: 12, color: textColor),
+              ),
+            ],
+          ),
         )
-
       ],
     );
   }

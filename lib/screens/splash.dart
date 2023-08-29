@@ -49,10 +49,18 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'MyChat App',
+                'ChatBase',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 28,
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Text(
+                'Chatting app using Firebase',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize:12 ,
                   fontWeight: FontWeight.bold,
                 ),
               ),
